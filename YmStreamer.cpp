@@ -43,12 +43,16 @@ int wmain(int argc, wchar_t* argv[])
         std::cout << "Remarks: " << s2.getSongComment() << std::endl;
         std::cout << "Length: " << s2.getDurationStr() << std::endl << std::endl;
         
+        if (s1.getFrameRate() != s2.getFrameRate()) {
+            throw std::invalid_argument("Files have different framerates");
+        }
+
         for (uint32_t f = 0; f < max(s1.getFrameCount(), s2.getFrameCount()); f++) {
             using namespace std::chrono;
             if (!running) {
                 break;
             }
-            auto end = high_resolution_clock::now() + 20ms;
+            auto end = high_resolution_clock::now() + (1s / s1.getFrameRate());
             d.updateTurboFrame(s1.getFrame(f), s2.getFrame(f));
             while (high_resolution_clock::now() < end) { (void)0; }
         }
